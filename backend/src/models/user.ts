@@ -1,28 +1,41 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { ObjectId, Schema } from "mongoose";
 import { hash } from "bcrypt";
 
 interface UserInterface {
   username: string;
   email: string;
   password: string;
+  friends: ObjectId[];
+  friendRequests: {
+    sent: ObjectId[];
+    received: ObjectId[];
+  };
 }
 
-const UserSchema = new Schema<UserInterface>({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
+const UserSchema = new Schema<UserInterface>(
+  {
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    friendRequests: {
+      sent: [{ type: Schema.Types.ObjectId, ref: "User" }],
+      received: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    },
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-});
+  { timestamps: true },
+);
 
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
