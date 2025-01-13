@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import registerRouter from "./routes/auth/register";
 import loginRouter from "./routes/auth/login";
+import getUsersRouter from './routes/users'
 
 dotenv.config();
 const app = express();
@@ -18,7 +19,7 @@ app.use(express.json());
 
 mongoose
   .connect(uri, {
-    dbName: 'social_network'
+    dbName: 'test'
   })
   .then(() => console.log("database connected"))
   .catch((error) =>
@@ -27,6 +28,7 @@ mongoose
 
 app.use("/user", registerRouter);
 app.use("/user", loginRouter);
+app.use('/users', getUsersRouter)
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
